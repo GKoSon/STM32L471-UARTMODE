@@ -34,3 +34,5 @@ usart1\main.o: ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart_ex.h
 usart1\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
 usart1\main.o: ../Inc/usart.h
 usart1\main.o: ../Inc/gpio.h
+usart1\main.o: ..\..\USART1\serial.h
+usart1\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h

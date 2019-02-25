@@ -1,0 +1,121 @@
+如何一个一个的接收？
+static void *serial_init( void *port , uint32_t band , rxIsrCb isr)
+{
+    UART_HandleTypeDef *serial = (UART_HandleTypeDef *)port;
+
+    serial->RxIsrCb = isr;
+
+    HAL_UART_SetIrq(serial);
+    
+    return port;
+}
+这个函数就绑定了接收的中断函数。它的port就是USART12345 比特率没有实现 isr是自己的函数
+typedef void (*rxIsrCb)	(uint8_t);
+
+
+继续看    HAL_UART_SetIrq(serial);
+它百度没有找到 MX别的工程也没有 它不是STM32HAL库函数 是自己杜撰的
+
+HAL_StatusTypeDef HAL_UART_SetIrq( UART_HandleTypeDef *huart )
+{
+}
+
+那么究竟是如何关联的呢？还是笼统的参数 我们注意  huart->RxISR = UART_RxISR_Data;
+这也是一个函数赋值给一个函数 看他！
+static void UART_RxISR_Data(UART_HandleTypeDef *huart)
+{
+}
+
+这里我们看到了huart->RxIsrCb 它接收一个byte了。
+果然看进去 陈强修改了STM32HAL的库！他增加了一个接受函数！
+
+操作：
+1增加模块 编译必然有err
+2usart.c增加2个函数 其中一个接口
+3库文件增加一个
+static void UART_RxISR_Data(UART_HandleTypeDef *huart)
+{
+  uint16_t uhMask = huart->Mask;
+  uint16_t  uhdata;
+  
+
+  if(huart->RxState == HAL_UART_STATE_BUSY_RX)
+  {
+    uhdata = (uint16_t) READ_REG(huart->Instance->RDR);
+    huart->RxIsrCb((uint8_t)(uhdata & (uint8_t)uhMask));//需要修改库
+  }
+  else
+  {
+    __HAL_UART_SEND_REQ(huart, UART_RXDATA_FLUSH_REQUEST);
+  }
+}
+
+//接口函数
+HAL_StatusTypeDef HAL_UART_SetIrq( UART_HandleTypeDef *huart )
+{
+  if(huart->RxState == HAL_UART_STATE_READY)
+  {
+    __HAL_LOCK(huart);
+      
+    /* Computation of UART mask to apply to RDR register */
+    UART_MASK_COMPUTATION(huart);
+    
+    huart->ErrorCode = HAL_UART_ERROR_NONE;
+    huart->RxState = HAL_UART_STATE_BUSY_RX;
+    
+    /* Enable the UART Error Interrupt: (Frame error, noise error, overrun error) */
+    SET_BIT(huart->Instance->CR3, USART_CR3_EIE);
+    
+    { 
+      /* Set the Rx ISR function pointer according to the data word length */
+      /*
+      if ((huart->Init.WordLength == UART_WORDLENGTH_9B) && (huart->Init.Parity == UART_PARITY_NONE))
+      {
+        huart->RxISR = UART_RxISR_16BIT;
+      }
+      else
+      {
+        huart->RxISR = UART_RxISR_8BIT;
+      }
+      */
+      huart->RxISR = UART_RxISR_Data;
+      SET_BIT(huart->Instance->CR1, USART_CR1_PEIE | USART_CR1_RXNEIE);
+       /* Process Unlocked */
+      __HAL_UNLOCK(huart);
+           
+
+    }
+    
+    return HAL_OK;
+  }
+  else
+  {
+    return HAL_BUSY;
+  }
+
+}
+
+void (*RxIsrCb)           (uint8_t ch);//需要修改库
+
+开始测试：
+
+
+void *console_port = NULL;
+
+static void console_getchar( uint8_t c)
+{
+    putchar( c ); //这是一个一个接收的函数 没有逻辑 收到就随即发出去了
+}
+
+void serial_console_init( void )
+{
+    console_port = serial.open("serial1");//匹配1号串口
+    if( console_port == NULL)  return ;
+    serial.init(console_port  , 921600 , console_getchar);
+}
+
+int fputc(int ch, FILE *f)
+{
+	serial.putc(console_port, ch);  
+	return ch;
+}

@@ -56,3 +56,4 @@ serialOpsType    serial=
     serial_putc,
     serial_puts,
 };
+

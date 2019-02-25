@@ -127,12 +127,78 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
 } 
 
 /* USER CODE BEGIN 1 */
+#if 0
 int fputc(int ch, FILE *f)//FILE 需要头文件 #include <stdio.h> 放在main.h去吧
 {
     
   HAL_UART_Transmit(&huart1 , (uint8_t *)&ch, 1 , 0xffff);
   
 	return ch;
+}
+#endif
+
+
+//给下面的接口函数提供支持
+static void UART_RxISR_Data(UART_HandleTypeDef *huart)
+{
+  uint16_t uhMask = huart->Mask;
+  uint16_t  uhdata;
+  
+
+  if(huart->RxState == HAL_UART_STATE_BUSY_RX)
+  {
+    uhdata = (uint16_t) READ_REG(huart->Instance->RDR);
+    huart->RxIsrCb((uint8_t)(uhdata & (uint8_t)uhMask));//需要修改库
+  }
+  else
+  {
+    __HAL_UART_SEND_REQ(huart, UART_RXDATA_FLUSH_REQUEST);
+  }
+}
+
+//接口函数
+HAL_StatusTypeDef HAL_UART_SetIrq( UART_HandleTypeDef *huart )
+{
+  if(huart->RxState == HAL_UART_STATE_READY)
+  {
+    __HAL_LOCK(huart);
+      
+    /* Computation of UART mask to apply to RDR register */
+    UART_MASK_COMPUTATION(huart);
+    
+    huart->ErrorCode = HAL_UART_ERROR_NONE;
+    huart->RxState = HAL_UART_STATE_BUSY_RX;
+    
+    /* Enable the UART Error Interrupt: (Frame error, noise error, overrun error) */
+    SET_BIT(huart->Instance->CR3, USART_CR3_EIE);
+    
+    { 
+      /* Set the Rx ISR function pointer according to the data word length */
+      /*
+      if ((huart->Init.WordLength == UART_WORDLENGTH_9B) && (huart->Init.Parity == UART_PARITY_NONE))
+      {
+        huart->RxISR = UART_RxISR_16BIT;
+      }
+      else
+      {
+        huart->RxISR = UART_RxISR_8BIT;
+      }
+      */
+      huart->RxISR = UART_RxISR_Data;
+      SET_BIT(huart->Instance->CR1, USART_CR1_PEIE | USART_CR1_RXNEIE);
+       /* Process Unlocked */
+      __HAL_UNLOCK(huart);
+           
+
+    }
+    
+    return HAL_OK;
+  }
+  else
+  {
+    return HAL_BUSY;
+  }
+
 }
 /* USER CODE END 1 */
 

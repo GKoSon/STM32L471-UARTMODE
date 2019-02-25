@@ -5,6 +5,7 @@
 "usart1\usart.o"
 "usart1\stm32l4xx_it.o"
 "usart1\stm32l4xx_hal_msp.o"
+"usart1\serial.o"
 "usart1\stm32l4xx_hal_tim.o"
 "usart1\stm32l4xx_hal_tim_ex.o"
 "usart1\stm32l4xx_hal_uart.o"

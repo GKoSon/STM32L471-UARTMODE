@@ -73,6 +73,28 @@
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
 
+#include "serial.h"
+void *console_port = NULL;
+
+static void console_getchar( uint8_t c)
+{
+    //putchar( c ); //这是一个一个接收的函数 没有逻辑 收到就随即发出去了
+    printf("%c",c);
+}
+
+void serial_console_init( void )
+{
+    console_port = serial.open("serial1");//匹配1号串口
+    if( console_port == NULL)  return ;
+    serial.init(console_port  , 921600 , console_getchar);//此函数以后才可以printf因为下面的函数在实在了
+}
+int fputc(int ch, FILE *f)
+{
+	serial.putc(console_port, ch);  
+	return ch;
+}
+
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -111,6 +133,9 @@ int main(void)
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
 
+
+	serial_console_init();
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -118,7 +143,8 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-		printf("\r\n%s\r\n",__FUNCTION__);
+		//printf("\r\n%s\r\n",__FUNCTION__);
+		HAL_Delay(800);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */

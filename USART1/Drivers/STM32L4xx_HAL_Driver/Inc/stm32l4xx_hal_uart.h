@@ -264,6 +264,8 @@ typedef struct __UART_HandleTypeDef
 
   void (*TxISR)(struct __UART_HandleTypeDef *huart); /*!< Function pointer on Tx IRQ handler   */
 
+  void (*RxIsrCb)           (uint8_t ch);//ÐèÒªÐÞ¸Ä¿âADD
+	
   DMA_HandleTypeDef        *hdmatx;                  /*!< UART Tx DMA Handle parameters      */
 
   DMA_HandleTypeDef        *hdmarx;                  /*!< UART Rx DMA Handle parameters      */

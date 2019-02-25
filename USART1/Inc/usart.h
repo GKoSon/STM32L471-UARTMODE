@@ -59,7 +59,7 @@ extern UART_HandleTypeDef huart1;
 void MX_USART1_UART_Init(void);
 
 /* USER CODE BEGIN Prototypes */
-
+HAL_StatusTypeDef HAL_UART_SetIrq( UART_HandleTypeDef *huart );
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus
