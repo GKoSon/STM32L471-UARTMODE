@@ -71,7 +71,7 @@ I (../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_pwr_ex.h)(0x5C04C1AF)
 I (../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart.h)(0x5C73840B)
 I (../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart_ex.h)(0x5C04C1AF)
 I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x57F606B8)
-F (../Src/usart.c)(0x5C73865A)(--c99 -c --cpu Cortex-M4.fp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Inc -I ../Drivers/STM32L4xx_HAL_Driver/Inc -I ../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32L4xx/Include -I ../Drivers/CMSIS/Include -I ..\..\USART1-I.\RTE\_USART1-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.1\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32L4xx_DFP\1.2.0\Device\Include-D__UVISION_VERSION="523" -D_RTE_ -DSTM32L471xx -DUSE_HAL_DRIVER -DSTM32L471xx-o usart1\usart.o --omf_browse usart1\usart.crf --depend usart1\usart.d)
+F (../Src/usart.c)(0x5C7388C4)(--c99 -c --cpu Cortex-M4.fp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Inc -I ../Drivers/STM32L4xx_HAL_Driver/Inc -I ../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32L4xx/Include -I ../Drivers/CMSIS/Include -I ..\..\USART1-I.\RTE\_USART1-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.1\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Keil\STM32L4xx_DFP\1.2.0\Device\Include-D__UVISION_VERSION="523" -D_RTE_ -DSTM32L471xx -DUSE_HAL_DRIVER -DSTM32L471xx-o usart1\usart.o --omf_browse usart1\usart.crf --depend usart1\usart.d)
 I (../Inc/usart.h)(0x5C73840B)
 I (../Inc/main.h)(0x5C737F5C)
 I (../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal.h)(0x5C04C1AF)
